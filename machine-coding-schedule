@@ -1,0 +1,64 @@
+Week	Day	Problems	Main Focus
+Week 1	Day 1	Counter + Progress Bar	useState, derived UI updates
+	Day 2	Tabs + Accordion	Conditional rendering, active state
+	Day 3	Star Rating + Password Strength Checker	Controlled interactions, validation
+	Day 4	Modal	Overlay logic, escape handling, reusable modal APIs
+	Day 5	Toast Notification + Stepper	Timers, sequencing, cleanup
+	Day 6	Image Carousel	Index management, intervals, edge cases
+	Day 7	Revision Day → Todo + Modal + Tabs	Blind rebuild without looking at code
+
+
+
+Week 2 — CRUD + Component Composition
+Day	Problems	Main Focus
+Day 8	Todo App	CRUD, component structure, filtering
+Day 9	Rebuild Todo App	Speed + localStorage + search
+Day 10	Todo + Modal + Toast	Composition of patterns
+Day 11	Carousel + Accordion + Stepper	Timed rebuilds
+Day 12	Reusable Button + Modal + Input	Reusable component thinking
+Day 13	Random 2 Beginner Problems	Interview simulation
+Day 14	Architecture Review	State flow, mistakes, optimizations
+
+
+Week 3 — Async + API Patterns
+Day	Problems	Main Focus
+Day 15	Pagination	Page math, slicing
+Day 16	Search with Debounce	Timers, API optimization
+Day 17	Autocomplete / Typeahead	Async UI, keyboard navigation
+Day 18	Infinite Scroll	IntersectionObserver, merging data
+Day 19	Timer / Stopwatch	Intervals, cleanup
+Day 20	Revision: Debounce + Infinite Scroll	Timed rebuilds
+Day 21	Autocomplete + Debounce Combined	Real interview pattern
+
+
+Week 4 — State Architecture + Data Handling
+Day	Problems	Main Focus
+Day 22	Shopping Cart	Reducers, totals, normalized state
+Day 23	Multi-select Dropdown	Controlled state management
+Day 24	Filterable Product List	Filtering, sorting, memoization
+Day 25	Sortable Table	Dynamic sorting logic
+Day 26	Form Validation	Validation schemas, touched state
+Day 27	Ecommerce Mini System	Cart + Filters + Sorting combined
+Day 28	Revision Day	Timed rebuilds
+Week 5 — Recursive UI + Complex State
+Day	Problems	Main Focus
+Day 29	Nested Comments	Recursive rendering
+Day 30	File Explorer	Tree UI, expand/collapse
+Day 31	Kanban Board (Part 1)	State structure
+Day 32	Kanban Board (Part 2)	Drag/drop concepts
+Day 33	Rebuild Nested Comments + File Explorer	Blind rebuild
+Day 34	Kanban + Timer Combined	Composition practice
+Day 35	Refactor + Review Day	Cleanup + optimization
+
+
+Weeks 6–8 — Advanced Frontend Systems
+Problem	Suggested Time
+Virtualized List	2 Days
+Data Grid	2 Days
+Calendar Component	2 Days
+Drag-and-drop List	2 Days
+Real-time Chat UI	2 Days
+Dashboard with Filters	2 Days
+Rich Text Editor Basics	2 Days
+Frontend Mini-router	2 Days
+Config-driven Form Builder	2–3 Days
