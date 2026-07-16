@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Timbukdo Mobile UI — Performance Audit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #10121a;
+    --bg-alt: #171a24;
+    --surface: #1b1f2b;
+    --surface-2: #21263450;
+    --hairline: #2c3242;
+    --text: #e7e9f2;
+    --text-dim: #9198b0;
+    --text-faint: #676f8a;
+    --critical: #ff5b54;
+    --critical-dim: #ff5b5422;
+    --high: #ffab40;
+    --high-dim: #ffab4022;
+    --medium: #4fd0e0;
+    --medium-dim: #4fd0e022;
+    --low: #8b95c9;
+    --low-dim: #8b95c922;
+    --good: #57e2a8;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(1200px 500px at 85% -5%, #ff5b5412, transparent 60%),
+      radial-gradient(900px 400px at 5% 10%, #4fd0e00e, transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+
+  /* ---------- layout shell ---------- */
+  .shell{display:grid; grid-template-columns:248px 1fr; max-width:1320px; margin:0 auto;}
+  @media (max-width: 980px){ .shell{grid-template-columns:1fr;} .nav{display:none;} }
+
+  .nav{
+    position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+    padding:32px 20px; border-right:1px solid var(--hairline);
+  }
+  .nav-brand{font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase; margin-bottom:6px;}
+  .nav-title{font-size:15px; font-weight:600; margin-bottom:28px; color:var(--text);}
+  .nav-group{margin-bottom:22px;}
+  .nav-group-label{font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-faint); margin-bottom:8px;}
+  .nav a{
+    display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-dim);
+    padding:5px 0; text-decoration:none; transition:color .15s;
+  }
+  .nav a:hover{color:var(--text);}
+  .nav-dot{width:6px; height:6px; border-radius:50%; flex-shrink:0;}
+
+  main{padding:0 0 100px 0; min-width:0;}
+
+  /* ---------- hero ---------- */
+  .hero{padding:64px 56px 40px; border-bottom:1px solid var(--hairline);}
+  @media (max-width:640px){.hero{padding:40px 22px 30px;}}
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--critical); margin-bottom:18px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:''; width:8px; height:8px; background:var(--critical); border-radius:50%; box-shadow:0 0 12px var(--critical);}
+  h1{font-size:clamp(28px,4vw,42px); font-weight:700; letter-spacing:-.02em; max-width:780px; margin-bottom:14px;}
+  .hero-sub{color:var(--text-dim); font-size:15.5px; max-width:640px; margin-bottom:32px;}
+  .stack-badges{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:40px;}
+  .badge{
+    font-family:var(--mono); font-size:12px; padding:5px 11px; border:1px solid var(--hairline);
+    border-radius:100px; color:var(--text-dim); background:var(--bg-alt);
+  }
+
+  .headline-stat{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--hairline);
+    border:1px solid var(--hairline); border-radius:14px; overflow:hidden;
+  }
+  @media (max-width:760px){.headline-stat{grid-template-columns:repeat(2,1fr);}}
+  .stat-cell{background:var(--surface); padding:22px 20px;}
+  .stat-num{font-family:var(--mono); font-size:clamp(22px,2.6vw,30px); font-weight:700; line-height:1;}
+  .stat-num.crit{color:var(--critical);}
+  .stat-num.good{color:var(--good);}
+  .stat-label{font-size:12px; color:var(--text-faint); margin-top:8px;}
+  .stat-arrow{color:var(--text-faint); font-size:13px; font-family:var(--mono);}
+
+  /* ---------- bundle bar viz (signature element) ---------- */
+  .viz-section{padding:48px 56px; border-bottom:1px solid var(--hairline);}
+  @media (max-width:640px){.viz-section{padding:36px 22px;}}
+  .section-kicker{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); margin-bottom:8px;}
+  .section-title{font-size:22px; font-weight:600; margin-bottom:6px;}
+  .section-desc{color:var(--text-dim); font-size:14px; margin-bottom:28px; max-width:640px;}
+
+  .bar-row{display:grid; grid-template-columns:200px 1fr 90px; align-items:center; gap:16px; padding:10px 0; border-bottom:1px solid var(--hairline);}
+  @media (max-width:640px){.bar-row{grid-template-columns:1fr; gap:6px; padding:14px 0;}}
+  .bar-name{font-family:var(--mono); font-size:12.5px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .bar-track{position:relative; height:22px; background:var(--bg-alt); border-radius:5px; overflow:hidden;}
+  .bar-fill{
+    height:100%; border-radius:5px;
+    display:flex; align-items:center; padding-left:10px;
+    font-family:var(--mono); font-size:10.5px; color:#0d0f16; font-weight:600; white-space:nowrap;
+  }
+  .bar-size{font-family:var(--mono); font-size:12.5px; text-align:right; color:var(--text-dim);}
+  .legend{display:flex; gap:20px; flex-wrap:wrap; margin-top:20px;}
+  .legend-item{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--text-dim);}
+  .legend-swatch{width:10px; height:10px; border-radius:3px;}
+
+  /* ---------- issue cards ---------- */
+  .issues-section{padding:48px 56px; border-bottom:1px solid var(--hairline);}
+  @media (max-width:640px){.issues-section{padding:36px 22px;}}
+  .sev-row{display:flex; align-items:center; gap:12px; margin-bottom:26px;}
+  .sev-pill{
+    font-family:var(--mono); font-size:11px; letter-spacing:.08em; font-weight:600; padding:5px 12px;
+    border-radius:100px; text-transform:uppercase;
+  }
+  .sev-pill.critical{background:var(--critical-dim); color:var(--critical);}
+  .sev-pill.high{background:var(--high-dim); color:var(--high);}
+  .sev-pill.medium{background:var(--medium-dim); color:var(--medium);}
+  .sev-pill.low{background:var(--low-dim); color:var(--low);}
+  .sev-count{font-size:13px; color:var(--text-faint);}
+
+  details.issue{
+    background:var(--surface); border:1px solid var(--hairline); border-radius:12px;
+    margin-bottom:12px; overflow:hidden;
+  }
+  details.issue[open]{border-color:#3a4257;}
+  details.issue summary{
+    list-style:none; cursor:pointer; padding:18px 22px; display:flex; align-items:center; gap:14px;
+  }
+  details.issue summary::-webkit-details-marker{display:none;}
+  .issue-id{font-family:var(--mono); font-size:11px; color:var(--text-faint); flex-shrink:0; width:28px;}
+  .issue-title{font-size:14.5px; font-weight:600; flex:1;}
+  .issue-impact{font-family:var(--mono); font-size:11.5px; color:var(--text-faint); flex-shrink:0; display:none;}
+  @media (min-width:760px){.issue-impact{display:block;}}
+  .chevron{color:var(--text-faint); transition:transform .2s; flex-shrink:0;}
+  details[open] .chevron{transform:rotate(90deg);}
+
+  .issue-body{padding:0 22px 22px; color:var(--text-dim); font-size:13.8px;}
+  .issue-body p{margin-bottom:12px;}
+  .issue-body table{width:100%; border-collapse:collapse; margin:14px 0; font-size:13px;}
+  .issue-body th{text-align:left; font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); padding:8px 10px; border-bottom:1px solid var(--hairline);}
+  .issue-body td{padding:8px 10px; border-bottom:1px solid var(--hairline); color:var(--text-dim);}
+  .issue-body td code, .issue-body p code{font-family:var(--mono); font-size:12px; background:var(--bg-alt); padding:1px 6px; border-radius:4px; color:var(--medium);}
+  pre{
+    background:#0c0e14; border:1px solid var(--hairline); border-radius:8px; padding:14px 16px;
+    overflow-x:auto; margin:12px 0; font-family:var(--mono); font-size:12.5px; line-height:1.6;
+  }
+  pre .bad{color:var(--critical);}
+  pre .good{color:var(--good);}
+  pre .cm{color:var(--text-faint);}
+  .savings-tag{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12px;
+    color:var(--good); background:#57e2a814; border:1px solid #57e2a833; padding:6px 12px; border-radius:8px; margin-top:6px;
+  }
+
+  /* ---------- action plan ---------- */
+  .plan-section{padding:48px 56px; border-bottom:1px solid var(--hairline);}
+  @media (max-width:640px){.plan-section{padding:36px 22px;}}
+  .phase{display:grid; grid-template-columns:140px 1fr; gap:24px; padding:24px 0; border-bottom:1px solid var(--hairline);}
+  @media (max-width:640px){.phase{grid-template-columns:1fr; gap:10px;}}
+  .phase:last-child{border-bottom:none;}
+  .phase-meta{font-family:var(--mono);}
+  .phase-num{font-size:11px; color:var(--text-faint); letter-spacing:.1em; text-transform:uppercase;}
+  .phase-time{font-size:13px; color:var(--text); margin-top:4px;}
+  .phase-impact{font-size:12px; color:var(--good); margin-top:8px; font-weight:600;}
+  .phase-title{font-size:16px; font-weight:600; margin-bottom:10px;}
+  .phase ul{list-style:none;}
+  .phase li{
+    font-size:13.5px; color:var(--text-dim); padding:6px 0 6px 20px; position:relative;
+  }
+  .phase li::before{content:'→'; position:absolute; left:0; color:var(--text-faint);}
+
+  /* ---------- impact table ---------- */
+  .impact-section{padding:48px 56px 64px;}
+  @media (max-width:640px){.impact-section{padding:36px 22px 48px;}}
+  .impact-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--hairline); border:1px solid var(--hairline); border-radius:14px; overflow:hidden;}
+  @media (max-width:820px){.impact-grid{grid-template-columns:1fr;}}
+  .impact-head{background:var(--bg-alt); padding:14px 18px; font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--text-faint);}
+  .impact-cell{background:var(--surface); padding:16px 18px; font-size:13.5px;}
+  .impact-cell.metric{color:var(--text); font-weight:600;}
+  .impact-cell .before{color:var(--text-faint);}
+  .impact-cell .after{color:var(--good); font-family:var(--mono); font-weight:600;}
+  .impact-cell .reduction{color:var(--high); font-family:var(--mono); font-weight:700;}
+
+  ::-webkit-scrollbar{width:9px; height:9px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--hairline); border-radius:6px;}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <nav class="nav">
+    <div class="nav-brand">Perf Audit · Apr 2026</div>
+    <div class="nav-title">Timbukdo Mobile UI</div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Overview</div>
+      <a href="#hero"><span class="nav-dot" style="background:var(--text-faint)"></span>Executive summary</a>
+      <a href="#viz"><span class="nav-dot" style="background:var(--text-faint)"></span>Bundle composition</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Findings</div>
+      <a href="#critical"><span class="nav-dot" style="background:var(--critical)"></span>Critical (3)</a>
+      <a href="#high"><span class="nav-dot" style="background:var(--high)"></span>High (5)</a>
+      <a href="#medium"><span class="nav-dot" style="background:var(--medium)"></span>Medium (7)</a>
+      <a href="#low"><span class="nav-dot" style="background:var(--low)"></span>Low (7)</a>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Wrap-up</div>
+      <a href="#plan"><span class="nav-dot" style="background:var(--text-faint)"></span>Action plan</a>
+      <a href="#impact"><span class="nav-dot" style="background:var(--good)"></span>Expected impact</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="eyebrow">Severe bundle bloat detected</div>
+      <h1>The build ships ~18&nbsp;MB of JavaScript for a mobile webview.</h1>
+      <p class="hero-sub">Most of it is illustration SVGs compiled into React components. Fixing that one pattern recovers the majority of the budget — everything else is cleanup.</p>
+      <div class="stack-badges">
+        <span class="badge">Vite 7</span>
+        <span class="badge">React 19</span>
+        <span class="badge">TypeScript</span>
+        <span class="badge">Tailwind CSS 4</span>
+        <span class="badge">Ant Design 5</span>
+        <span class="badge">Redux Toolkit</span>
+      </div>
+
+      <div class="headline-stat">
+        <div class="stat-cell">
+          <div class="stat-num crit">3.79 MB</div>
+          <div class="stat-label">Largest chunk (Boost) <span class="stat-arrow">→ target &lt;200 KB</span></div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num crit">~12 MB</div>
+          <div class="stat-label">SVG-as-JS across chunks <span class="stat-arrow">→ target 0</span></div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num crit">~18 MB</div>
+          <div class="stat-label">Total JS output <span class="stat-arrow">→ target &lt;2 MB</span></div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num good">86%</div>
+          <div class="stat-label">Reduction achievable across all 3 phases</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="viz-section" id="viz">
+      <div class="section-kicker">Signature finding</div>
+      <div class="section-title">Top offending chunks, by size</div>
+      <p class="section-desc">Bar width is proportional to build size. Almost every chunk over 1&nbsp;MB traces back to a single cause: multi-megabyte illustration SVGs imported as React components via <code style="font-family:var(--mono);color:var(--medium);background:var(--bg-alt);padding:1px 6px;border-radius:4px;">?react</code>.</p>
+
+      <div id="bars"></div>
+
+      <div class="legend">
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--critical)"></span>SVG illustration bloat</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--high)"></span>Vendor / library</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:var(--medium)"></span>Route chunk / mixed cause</div>
+      </div>
+    </section>
+
+    <section class="issues-section" id="critical">
+      <div class="sev-row">
+        <span class="sev-pill critical">Critical</span>
+        <span class="sev-count">3 issues · fix first</span>
+      </div>
+
+      <details class="issue" open>
+        <summary>
+          <span class="issue-id">C1</span>
+          <span class="issue-title">Giant SVG icons imported as React components</span>
+          <span class="issue-impact">~12 MB JS</span>
+          <span class="chevron">›</span>
+        </summary>
+        <div class="issue-body">
+          <p>Multi-megabyte illustration/banner SVGs are converted to inline React components via <code>?react</code>. A single file like <code>Tim_Rating_short.svg</code> (2.4 MB raw) becomes a 2.46 MB JS file — <code>svgr</code> turns every <code>&lt;path&gt;</code> into a <code>React.createElement()</code> call, inflating size 20–50% over the raw SVG.</p>
+          <table>
+            <tr><th>File</th><th>Raw</th><th>Built JS</th><th>Used in</th></tr>
+            <tr><td><code>Tim_Rating_short.svg</code></td><td>2.46 MB</td><td>2.46 MB</td><td>DonutsPage, Hourly, Shop</td></tr>
+            <tr><td><code>pancardicon.svg</code></td><td>1.67 MB</td><td>2.62 MB</td><td>BannerCarousel</td></tr>
+            <tr><td><code>Tim_Main_banner.svg</code></td><td>1.65 MB</td><td>1.72 MB</td><td>EarnView, Shop</td></tr>
+            <tr><td><code>Tim_history.svg</code></td><td>1.75 MB</td><td>1.77 MB</td><td>PaymentHistory</td></tr>
+            <tr><td>Travel-category icons (6 files)</td><td>~8.5 MB</td><td>2.92 MB (Travel chunk)</td><td>Travel section</td></tr>
+          </table>
+          <pre><span class="bad">// ❌ 1.72 MB JavaScript</span>
+import MascotBanner from "@assets/icons/Tim_Main_banner.svg?react";
+&lt;MascotBanner /&gt;
+
+<span class="good">// ✅ ~30 KB WebP loaded as an image</span>
+import mascotBannerUrl from "@assets/icons/Tim_Main_banner.webp";
+&lt;img src={mascotBannerUrl} alt="Mascot banner" loading="lazy" /&gt;</pre>
+          <div class="savings-tag">↓ ~12 MB JS → ~500 KB images (95%+ reduction)</div>
+        </div>
+      </details>
+
+      <details class="issue">
+        <summary>
+          <span class="issue-id">C2</span>
+          <span class="issue-title"><code style="font-family:var(--mono);background:none;color:inherit;">activity.png</code> is 1.94 MB, shipped verbatim</span>
+          <span class="issue-impact">1.94 MB</span>
+          <span class="chevron">›</span>
+        </summary>
+        <div class="issue-body">
+          <p>A 1.94 MB PNG is copied as-is into the build. Convert to WebP at a reduced resolution.</p>
+          <pre>npx sharp-cli -i src/assets/icons/activity.png \
+  -o src/assets/icons/activity.webp --webp --quality 80 --resize 800</pre>
+          <div class="savings-tag">↓ 1.94 MB → ~80 KB</div>
+        </div>
+      </details>
+
+      <details class="issue">
+        <summary>
+          <span class="issue-id">C3</span>
+          <span class="issue-title"><code style="font-family:var(--mono);background:none;color:inherit;">india-composite.json</code> eagerly loaded in Locate</span>
+          <span class="issue-impact">112 KB</span>
+          <span class="chevron">›</span>
+        </summary>
+        <div class="issue-body">
+          <p>GeoJSON is statically bundled into the Locate chunk even when the map is never shown. Load it dynamically, or better, from a CDN/API endpoint.</p>
+          <pre><span class="cm">// Locate.tsx</span>
+<span class="bad">// ❌ bundled even if map is never rendered</span>
+import indiaBoundary from "@/assets/india-composite.json";
+
+<span class="good">// ✅ loaded only when the map renders</span>
+const indiaBoundary = await import("@/assets/india-composite.json")
+  .then(m => m.default);</pre>
+        </div>
+      </details>
+    </section>
+
+    <section class="issues-section" id="high">
+      <div class="sev-row">
+        <span class="sev-pill high">High</span>
+        <span class="sev-count">5 issues</span>
+      </div>
+
+      <details class="issue">
+        <summary><span class="issue-id">H1</span><span class="issue-title">moment.js — 60 KB, non-tree-shakeable</span><span class="issue-impact">~55 KB</span><span class="chevron">›</span></summary>
+        <div class="issue-body">
+          <p>Used in 5 files (<code>jobUtils.ts</code>, <code>Filter.tsx</code>, <code>AskTim.tsx</code>, <code>JobStatus.tsx</code>, <code>JobDetails/Utils/utils.ts</code>) for simple <code>.format()</code> calls. <code>dayjs</code> (7 KB) is already bundled as an antd dependency.</p>
+          <pre><span class="bad">// ❌</span> import moment from "moment";
+moment(rawDate).format("ddd DD-MMM");
+
+<span class="good">// ✅</span> import dayjs from "dayjs";
+dayjs(rawDate).format("ddd DD-MMM");</pre>
+        </div>
+      </details>
+
+      <details class="issue">
+        <summary><span class="issue-id">H2</span><span class="issue-title">antd full imports + three duplicate toast systems</span><span class="issue-impact">200–400 KB</span><span class="chevron">›</span></summary>
+        <div class="issue-body">
+          <p>Three notification systems run in parallel: <code>antd message</code> (~20 files), <code>toastr</code> (5 files), and a custom <code>showAlert</code> via <code>ModalHelper.ts</code>. Consolidate to <code>antd message</code> and drop <code>toastr</code>.</p>
+          <table>
+            <tr><th>Component</th><th>Files using it</th><th>Suggested swap</th></tr>
+            <tr><td><code>Spin</code></td><td>2</td><td>CSS spinner</td></tr>
+            <tr><td><code>Carousel</code></td><td>3</td><td><code>embla-carousel</code> (3 KB)</td></tr>
+            <tr><td><code>List</code></td><td>1</td><td>native <code>.map()</code></td></tr>
+            <tr><td><code>Tabs</code></td><td>1</td><td>custom tab component</td></tr>
+          </table>
+        </div>
+      </details>
+
+      <details class="issue">
+        <summary><span class="issue-id">H3</span><span class="issue-title">Firebase SDK loaded eagerly at startup</span><span class="issue-impact">100–150 KB</span><span class="chevron">›</span></summary>
+        <div class="issue-body">
+          <p>Auth and Analytics both initialize at module load in <code>firebase.ts</code>, regardless of route. Auth is only needed on Login/OTP; Analytics can be deferred entirely.</p>
+          <pre><span class="good">// ✅ lazy init</span>
+export const getFirebaseAuth = async () => {
+  if (!_auth) {
+    const { getAuth } = await import("firebase/auth");
+    _auth = getAuth(app);
+  }
+  return _auth;
+};</pre>
+        </div>
+      </details>
+
+      <details class="issue">
+        <summary><span class="issue-id">H4</span><span class="issue-title"><code style="font-family:var(--mono);background:none;color:inherit;">useNativeEventTracker</code> chunk is 213 KB</span><span class="issue-impact">213 KB</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p>Investigate what's pulled into this chunk — likely Firebase Analytics is bundled in transitively via this utility.</p></div>
+      </details>
+
+      <details class="issue">
+        <summary><span class="issue-id">H5</span><span class="issue-title">Three overlapping icon systems</span><span class="issue-impact">30–50 KB</span><span class="chevron">›</span></summary>
+        <div class="issue-body">
+          <p>Custom SVGs via <code>vite-plugin-svgr</code> (84 files), <code>lucide-react</code> (~22 files), and <code>@ant-design/icons</code> (8 files) all run side by side. Standardize on <code>lucide-react</code> for UI icons and keep only brand SVGs as custom assets.</p>
+          <pre><span class="bad">// ❌</span> import { LoadingOutlined } from "@ant-design/icons";
+<span class="good">// ✅</span> import { Loader } from "lucide-react";</pre>
+        </div>
+      </details>
+    </section>
+
+    <section class="issues-section" id="medium">
+      <div class="sev-row">
+        <span class="sev-pill medium">Medium</span>
+        <span class="sev-count">7 issues</span>
+      </div>
+
+      <details class="issue">
+        <summary><span class="issue-id">M1</span><span class="issue-title">Unused / redundant dependencies</span><span class="issue-impact">~200 KB</span><span class="chevron">›</span></summary>
+        <div class="issue-body">
+          <table>
+            <tr><th>Dependency</th><th>Status</th><th>Action</th></tr>
+            <tr><td><code>slick-carousel</code></td><td>Zero imports</td><td>Remove</td></tr>
+            <tr><td><code>dotenv</code></td><td>Zero imports — Vite handles env natively</td><td>Remove</td></tr>
+            <tr><td><code>libphonenumber-js</code></td><td>Zero imports</td><td>Remove (~150 KB)</td></tr>
+            <tr><td><code>toastr</code></td><td>Duplicates antd message</td><td>Migrate, remove</td></tr>
+            <tr><td><code>load-image-react</code></td><td>Used in 1 file</td><td>Replace with native <code>&lt;img&gt;</code></td></tr>
+          </table>
+        </div>
+      </details>
+
+      <details class="issue">
+        <summary><span class="issue-id">M2</span><span class="issue-title">RTK Query placeholder — dead code</span><span class="chevron">›</span></summary>
+        <div class="issue-body">
+          <p><code>api.ts</code> registers an RTK Query slice pointed at <code>jsonplaceholder.typicode.com</code> with zero endpoints, still adding middleware overhead to the store. Remove until actually needed.</p>
+        </div>
+      </details>
+
+      <details class="issue">
+        <summary><span class="issue-id">M3</span><span class="issue-title">Missing React.memo on frequently re-rendered components</span><span class="chevron">›</span></summary>
+        <div class="issue-body">
+          <p>Only <code>CaResult.tsx</code> uses <code>React.memo</code> today. <code>GigCard</code>, <code>DealCard</code>, <code>FooterTabs</code>, <code>ProfileItem</code>, and <code>BannerCarousel</code> all re-render unnecessarily in lists or on parent updates.</p>
+        </div>
+      </details>
+
+      <details class="issue">
+        <summary><span class="issue-id">M4</span><span class="issue-title"><code style="font-family:var(--mono);background:none;color:inherit;">Locate.tsx</code> — 509-line monolith</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p>Contains inline <code>MapController</code> and <code>NoVendors</code> components (the latter re-created every render), plus Haversine math, pincode geocoding, native bridge calls, and data fetching all in one file. Extract each concern into its own hook/component.</p></div>
+      </details>
+
+      <details class="issue">
+        <summary><span class="issue-id">M5</span><span class="issue-title">Leaflet not dynamically imported</span><span class="issue-impact">285 KB</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p>Leaflet + CSS + GeoJSON sit in the already-lazy Locate chunk, but the map itself only needs to load once a user toggles to map view — defer it a level further with its own <code>lazy()</code> boundary.</p></div>
+      </details>
+
+      <details class="issue">
+        <summary><span class="issue-id">M6</span><span class="issue-title">Duplicate MascotBanner import</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p><code>Tim_Main_banner.svg?react</code> is imported in both <code>EarnView.tsx</code> and <code>Shop.tsx</code>. Resolves itself once C1's WebP conversion lands.</p></div>
+      </details>
+
+      <details class="issue">
+        <summary><span class="issue-id">M7</span><span class="issue-title">Tailwind config references uninstalled plugins</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p><code>tailwind.config.js</code> requires <code>@tailwindcss/forms</code>, <code>typography</code>, <code>aspect-ratio</code>, and <code>line-clamp</code> — none are in <code>package.json</code>. Since the project runs Tailwind v4 via <code>@tailwindcss/vite</code>, this whole config file may be silently ignored; verify it's actually consumed.</p></div>
+      </details>
+    </section>
+
+    <section class="issues-section" id="low">
+      <div class="sev-row">
+        <span class="sev-pill low">Low</span>
+        <span class="sev-count">7 issues</span>
+      </div>
+
+      <details class="issue">
+        <summary><span class="issue-id">L1</span><span class="issue-title"><code style="font-family:var(--mono);background:none;color:inherit;">message.config()</code> called on every render</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p>In <code>App.tsx</code> (line 139), move the call into a <code>useEffect(() =&gt; {...}, [])</code>.</p></div>
+      </details>
+      <details class="issue">
+        <summary><span class="issue-id">L2</span><span class="issue-title"><code style="font-family:var(--mono);background:none;color:inherit;">waitForBridge()</code> duplicated across files</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p>Copy-pasted in <code>HomePage.tsx</code> and <code>Locate.tsx</code>. Extract to a shared <code>src/utils/nativeBridge.ts</code>.</p></div>
+      </details>
+      <details class="issue">
+        <summary><span class="issue-id">L3</span><span class="issue-title">Bundle visualizer plugin always active</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p><code>visualizer({ open: true })</code> opens stats.html on every build. Gate it behind <code>process.env.ANALYZE</code>.</p></div>
+      </details>
+      <details class="issue">
+        <summary><span class="issue-id">L4</span><span class="issue-title">Redundant user-data API calls</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p><code>ProtectedApp.tsx</code> and <code>HomePage.tsx</code> each fetch user data independently. Consolidate into one Redux fetch, consume via <code>useAppSelector</code>.</p></div>
+      </details>
+      <details class="issue">
+        <summary><span class="issue-id">L5</span><span class="issue-title">Facebook Pixel script blocks rendering</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p>Inline synchronous script in <code>index.html</code>. Defer until after <code>window load</code>.</p></div>
+      </details>
+      <details class="issue">
+        <summary><span class="issue-id">L6</span><span class="issue-title">No gzip/brotli compression configured</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p>Add <code>vite-plugin-compression</code> for both gzip and brotli output.</p></div>
+      </details>
+      <details class="issue">
+        <summary><span class="issue-id">L7</span><span class="issue-title">No manual chunk strategy</span><span class="chevron">›</span></summary>
+        <div class="issue-body"><p>Split vendor code predictably: <code>vendor-react</code>, <code>vendor-antd</code>, <code>vendor-redux</code>, <code>vendor-firebase</code>, <code>vendor-motion</code>.</p></div>
+      </details>
+    </section>
+
+    <section class="plan-section" id="plan">
+      <div class="section-kicker">Roadmap</div>
+      <div class="section-title">Prioritized action plan</div>
+
+      <div class="phase">
+        <div class="phase-meta">
+          <div class="phase-num">Phase 1</div>
+          <div class="phase-time">1–2 days</div>
+          <div class="phase-impact">≈13 MB reduction</div>
+        </div>
+        <div>
+          <div class="phase-title">Quick wins</div>
+          <ul>
+            <li>Convert all large SVGs to WebP, load via <code>&lt;img&gt;</code> (C1, C2)</li>
+            <li>Remove unused deps: slick-carousel, dotenv, libphonenumber-js (M1)</li>
+            <li>Remove the RTK Query placeholder (M2)</li>
+            <li>Replace moment with dayjs (H1)</li>
+            <li>Consolidate toastr → antd message, remove toastr (H2a)</li>
+            <li>Make the visualizer plugin conditional (L3)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-meta">
+          <div class="phase-num">Phase 2</div>
+          <div class="phase-time">3–5 days</div>
+          <div class="phase-impact">≈400 KB reduction</div>
+        </div>
+        <div>
+          <div class="phase-title">Architecture improvements</div>
+          <ul>
+            <li>Lazy-load Firebase Auth / Analytics (H3)</li>
+            <li>Standardize on lucide-react, remove @ant-design/icons (H5)</li>
+            <li>Add manualChunks to Vite config (L7)</li>
+            <li>Add gzip/brotli compression plugin (L6)</li>
+            <li>Split Locate.tsx — extract map into lazy sub-component (M5)</li>
+            <li>Memoize list-item components (M3)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-meta">
+          <div class="phase-num">Phase 3</div>
+          <div class="phase-time">1 week</div>
+          <div class="phase-impact">Deep optimization</div>
+        </div>
+        <div>
+          <div class="phase-title">Longer-term cleanup</div>
+          <ul>
+            <li>Evaluate replacing heavy antd components with lightweight alternatives</li>
+            <li>Audit and extract duplicate code patterns (L2)</li>
+            <li>Defer Facebook Pixel (L5)</li>
+            <li>Validate Tailwind v4 config consistency (M7)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="impact-section" id="impact">
+      <div class="section-kicker">Bottom line</div>
+      <div class="section-title">Expected impact after all fixes</div>
+      <div class="impact-grid">
+        <div class="impact-head">Metric</div><div class="impact-head">Before</div><div class="impact-head">After (est.)</div><div class="impact-head">Reduction</div>
+
+        <div class="impact-cell metric">Total JS</div><div class="impact-cell before">~18 MB</div><div class="impact-cell after">~2.5 MB</div><div class="impact-cell reduction">86%</div>
+        <div class="impact-cell metric">Largest chunk</div><div class="impact-cell before">3.79 MB</div><div class="impact-cell after">~200 KB</div><div class="impact-cell reduction">95%</div>
+        <div class="impact-cell metric">Initial load JS</div><div class="impact-cell before">~3 MB</div><div class="impact-cell after">~500 KB</div><div class="impact-cell reduction">83%</div>
+        <div class="impact-cell metric">Time to interactive (3G)</div><div class="impact-cell before">~8s</div><div class="impact-cell after">~2s</div><div class="impact-cell reduction">75%</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  const chunks = [
+    { name: 'Boost-BwiVUo5o.js', size: 3.79, cause: 'crit' },
+    { name: 'Travel-CSdb7cEo.js', size: 2.92, cause: 'crit' },
+    { name: 'pancardicon-DSGFj7cA.js', size: 2.62, cause: 'crit' },
+    { name: 'Tim_Rating_short-Be1takKK.js', size: 2.46, cause: 'crit' },
+    { name: 'PaymentHistory-C1w9h5Fy.js', size: 1.77, cause: 'crit' },
+    { name: 'Tim_Main_banner-C1HYM6sJ.js', size: 1.72, cause: 'crit' },
+    { name: 'index-DQfqwV4t.js (antd core)', size: 0.672, cause: 'high' },
+    { name: 'Locate-DM6ewdXo.js', size: 0.285, cause: 'med' },
+    { name: 'useNativeEventTracker-CQHtYxTX.js', size: 0.213, cause: 'high' },
+    { name: 'proxy-7hv4Z1nk.js (Framer Motion)', size: 0.112, cause: 'high' },
+    { name: 'moment-BLMuvzoS.js', size: 0.060, cause: 'high' },
+  ];
+  const max = Math.max(...chunks.map(c => c.size));
+  const colorMap = { crit: 'var(--critical)', high: 'var(--high)', med: 'var(--medium)' };
+  const container = document.getElementById('bars');
+  chunks.forEach(c => {
+    const pct = Math.max((c.size / max) * 100, 4);
+    const sizeLabel = c.size >= 1 ? c.size.toFixed(2) + ' MB' : Math.round(c.size * 1000) + ' KB';
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML = `
+      <div class="bar-name" title="${c.name}">${c.name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${colorMap[c.cause]};"></div></div>
+      <div class="bar-size">${sizeLabel}</div>
+    `;
+    container.appendChild(row);
+  });
+</script>
+</body>
+</html>
