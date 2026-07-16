@@ -1,0 +1,121 @@
+frontend-system-design-interview
+│
+├── README.md
+├── LICENSE
+├── .gitignore
+│
+├── Level-1-Core-Applications
+│   ├── 01-Instagram-Feed
+│   │   ├── README.md
+│   │   ├── architecture.png
+│   │   └── notes.md
+│   │
+│   ├── 02-Chat-Application
+│   ├── 03-Notification-System
+│   ├── 04-YouTube-Home-Feed
+│   └── 05-Ecommerce-PLP
+│
+├── Level-2-Scaling
+│   ├── 06-Frontend-For-1M-Users
+│   ├── 07-100-Pages-Dashboard
+│   ├── 08-Component-Library
+│   ├── 09-Multi-Tenant-SaaS
+│   └── 10-Analytics-Dashboard
+│
+├── Level-3-Performance
+│   ├── 11-100k-Rows
+│   ├── 12-Search-Autocomplete
+│   ├── 13-Google-Docs
+│   ├── 14-Video-Streaming
+│   └── 15-File-Upload
+│
+├── Level-4-React
+│   ├── 16-State-Management
+│   ├── 17-Authentication
+│   ├── 18-RBAC
+│   ├── 19-Error-Handling
+│   └── 20-Monitoring
+│
+└── Interview-Gold
+    ├── 21-LinkedIn
+    ├── 22-WhatsApp-Web
+    ├── 23-Netflix
+    ├── 24-Google-Maps
+    └── 25-Jira-Trello
+
+
+    1. Problem Statement
+
+2. Functional Requirements
+
+3. Non-Functional Requirements
+
+4. Capacity Estimation
+
+5. High-Level Architecture
+
+6. Component Diagram
+
+7. Data Flow
+
+8. API Design
+
+9. State Management
+
+10. Caching Strategy
+
+11. Performance Optimizations
+
+12. Security Considerations
+
+13. Trade-offs
+
+14. Interview Questions
+
+15. Future Improvements
+
+
+
+# Frontend System Design Interview
+
+A collection of frontend system design questions frequently asked in 3–5 year frontend engineer interviews.
+
+## Level 1 — Core Applications
+
+- [ ] Design Instagram Feed
+- [ ] Design Chat Application
+- [ ] Design Notification System
+- [ ] Design YouTube Home Feed
+- [ ] Design E-commerce Product Listing
+
+## Level 2 — Scaling
+
+- [ ] Design Frontend for 1 Million Users
+- [ ] Design Dashboard with 100+ Pages
+- [ ] Design Component Library
+- [ ] Design Multi-Tenant SaaS
+- [ ] Design Analytics Dashboard
+
+## Level 3 — Performance
+
+- [ ] Design 100k Rows Page
+- [ ] Design Search Autocomplete
+- [ ] Design Google Docs
+- [ ] Design Video Streaming
+- [ ] Design File Upload System
+
+## Level 4 — React
+
+- [ ] Global State Management
+- [ ] Authentication Flow
+- [ ] Role-Based Access Control
+- [ ] Error Handling
+- [ ] Frontend Monitoring
+
+## Interview Gold
+
+- [ ] LinkedIn
+- [ ] WhatsApp Web
+- [ ] Netflix
+- [ ] Google Maps
+- [ ] Jira / Trello
