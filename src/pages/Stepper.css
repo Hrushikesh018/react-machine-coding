@@ -1,0 +1,38 @@
+.Step{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 20px;
+}
+.container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 400px;
+    padding: 20px;
+}
+.button{
+    min-width: 50px;
+}
+.step-circle{
+    border-radius: 50%;
+    background-color: red;
+    padding: 20px;
+    position: relative;
+}
+.step-line{
+    position: absolute;
+    height: 40px;
+    width: 2px;
+    background-color: black;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.active{
+    background-color: blue;
+    color: white;
+}
+.active-line{
+    background-color: aqua;
+}
