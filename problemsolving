@@ -1,0 +1,130 @@
+Since you're preparing for **Frontend Developer (3 years experience)** interviews, I'd prioritize questions that repeatedly appear in JavaScript, React, and general coding rounds rather than diving deep into advanced competitive-programming problems.
+
+# Tier 1: Easy but Tricky (Must Do First)
+
+These test fundamentals and catch many candidates.
+
+1. Valid Parentheses
+2. Remove Duplicates from Sorted Array
+3. Contains Duplicate
+4. Two Sum
+5. Missing Number
+6. Single Number
+7. Move Zeroes
+8. Palindrome Number
+9. Valid Palindrome
+10. Reverse String
+11. Reverse Words in a String
+12. Length of Last Word
+13. First Unique Character in String
+14. Find the Difference
+15. FizzBuzz
+
+---
+
+# Tier 2: Arrays (Very Frequently Asked)
+
+16. Best Time to Buy and Sell Stock
+17. Maximum Subarray (Kadane's Algorithm)
+18. Product of Array Except Self
+19. Merge Sorted Arrays
+20. Rotate Array
+21. Intersection of Two Arrays
+22. Majority Element
+23. Find All Duplicates in Array
+24. Longest Consecutive Sequence
+25. Container With Most Water
+
+---
+
+# Tier 3: Strings (Frontend Favorite)
+
+26. Longest Common Prefix
+27. Group Anagrams
+28. Valid Anagram
+29. Longest Substring Without Repeating Characters
+30. Longest Palindromic Substring
+31. String Compression
+32. Isomorphic Strings
+33. Word Pattern
+34. Decode String
+35. Minimum Window Substring
+
+---
+
+# Tier 4: HashMap / Set Questions
+
+36. Top K Frequent Elements
+37. Happy Number
+38. Ransom Note
+39. Find Duplicate Number
+40. Subarray Sum Equals K
+
+---
+
+# Tier 5: Sliding Window (Very Common)
+
+41. Maximum Average Subarray
+42. Permutation in String
+43. Longest Repeating Character Replacement
+44. Minimum Size Subarray Sum
+45. Fruits Into Baskets
+
+---
+
+# Tier 6: Stack Questions
+
+46. Min Stack
+47. Daily Temperatures
+48. Next Greater Element
+49. Evaluate Reverse Polish Notation
+50. Largest Rectangle in Histogram
+
+---
+
+# Tier 7: Linked List (Asked Surprisingly Often)
+
+51. Reverse Linked List
+52. Middle of Linked List
+53. Linked List Cycle
+54. Merge Two Sorted Lists
+55. Remove Nth Node From End
+
+---
+
+# Tier 8: Binary Search (Easy-Medium)
+
+56. Binary Search
+57. Search Insert Position
+58. First Bad Version
+59. Find Peak Element
+60. Search in Rotated Sorted Array
+
+---
+
+# Top 20 Most Important (If Short on Time)
+
+If you only have a few days, do these first:
+
+1. Two Sum
+2. Valid Parentheses
+3. Best Time to Buy and Sell Stock
+4. Maximum Subarray
+5. Move Zeroes
+6. Contains Duplicate
+7. Product of Array Except Self
+8. Longest Substring Without Repeating Characters
+9. Group Anagrams
+10. Valid Anagram
+11. Reverse Linked List
+12. Linked List Cycle
+13. Binary Search
+14. Search in Rotated Sorted Array
+15. Top K Frequent Elements
+16. Subarray Sum Equals K
+17. Daily Temperatures
+18. Next Greater Element
+19. Longest Consecutive Sequence
+20. Merge Intervals
+
+For frontend interviews, mastering these 20 plus JavaScript concepts (closures, event loop, promises, debounce, throttle, polyfills, currying, memoization) covers a very large percentage of coding rounds.
