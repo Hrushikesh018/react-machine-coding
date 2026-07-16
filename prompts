@@ -1,0 +1,213 @@
+You are an expert prompt engineer.
+
+Your task is to generate a high-quality, production-ready prompt based strictly on the context provided.
+
+Context:
+{{PASTE CONTEXT HERE}}
+
+Objective:
+{{CLEARLY STATE WHAT THE FINAL PROMPT SHOULD ACHIEVE}}
+
+Target Model:
+{{ChatGPT / GPT-4 / Claude / Gemini / Any LLM}}
+
+Constraints:
+- Use only the given context; do not assume missing information
+- Be explicit, unambiguous, and instruction-driven
+- Avoid vague language, filler, or marketing fluff
+- Optimize for accuracy, structure, and reproducibility
+
+Output Requirements:
+- The output must be a single, complete prompt
+- The prompt should clearly define:
+  1. Role of the AI
+  2. Scope and boundaries
+  3. Step-by-step expectations (if applicable)
+  4. Output format (if applicable)
+- The prompt must be directly usable without further clarification
+
+Generate only the final prompt. Do not include explanations or commentary.
+
+- Provide 3 variants: Conservative, Balanced, and Creative
+
+
+/////////////////////////////////////////////////////////////////////////
+
+
+Here is a **perfectly crafted prompt** you can use anytime — it forces the model to think like a **professional UI/UX designer**, apply **best modern design patterns**, and return **premium, visually appealing UI**:
+
+---
+
+# ✅ **MASTER UI/UX DESIGN PROMPT (Copy & Use Anytime)**
+
+**“Make this UI visually stunning and professionally designed.
+Use modern best practices for mobile-first UI, premium spacing, balanced typography, clean hierarchy, and delightful micro-interactions.
+Apply a polished, consistent color system, smooth shadows, rounded corners, and whitespace for clarity.
+Think like a senior UI/UX designer from Apple, Stripe, Notion, and Revolut.
+The output must be elegant, minimal, intuitive, and aesthetically premium.
+Add animations or transitions only if they enhance the experience.
+Fix alignment, spacing, and visual hierarchy.
+Make interactive elements clear and accessible.
+Ensure the design feels high-end, modern, and production-ready.
+Now optimize this component/UI for the best possible user experience.”**
+
+---
+
+# 🔥 **Shorter Version**
+
+**“Make this UI premium, clean, modern, and visually appealing using world-class UI/UX design principles.
+Improve spacing, alignment, hierarchy, contrast, colors, and interactions to create a delightful, intuitive experience.”**
+
+---
+
+# 💎 **Supercharged Version (for big components or full screens)**
+
+**“Act as a Principal Product Designer.
+Redesign this UI with a premium aesthetic inspired by Apple, CashApp, Stripe, and Airbnb.
+Focus on clarity, balance, elegance, and emotional appeal.
+Use high-end spacing, smooth shadows, subtle gradients, perfect alignment, and accessible contrast.
+Ensure the layout feels modern, intuitive, and crafted with intention.
+Simplify where needed, enhance where helpful, and make the entire screen look like a polished, world-class product.”**
+
+---
+
+If you want, I can also create:
+
+✨ A version specifically for **Tailwind**
+✨ A version specifically for **Figma design requests**
+✨ A version specifically for **React components**
+
+Just tell me “give Tailwind prompt” or “give React prompt”.
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+I’ll provide u .scss files (and sometimes the related .tsx file for clarity).
+
+Your task:
+
+Refactor your SCSS using nesting and your existing mixins/colors.
+
+Maintain clean, readable, and scalable structure.
+
+Use only what’s available in your colors.scss and mixin.scss.
+
+If something is missing (like a spacing variable or new color), I’ll suggest an addition — clearly marked with a comment // 🔧 suggest: add to variables.
+
+Proper nesting structure
+
+Use of my mixins and color variables
+
+Clean, scalable structure with consistent formatting
+
+From now on, You’ll follow this exact structure and standard I've set.
+✅ Confirmed SCSS Structure Standards
+
+Use @use '@/styles/mixins' as *; and @use '@/styles/colors' as *; at the top.
+
+Use BEM-style nesting (.component { .child { ... } }).
+
+Use mixins for:
+
+@include flex-center;
+
+@include transition;
+
+@include respond();
+
+@include text-ellipsis;
+
+Use variables from colors.scss wherever possible.
+
+Add new suggestions as inline comments using
+
+// 🔧 suggest: add $variable-name: value;
+
+
+Keep readable indentation, clean spacing, and & for modifiers 
+
+Maintain the same css
+nesting format, mixins, and color usage — nothing complicated or extra
+
+
+remember these instructions i'll give you my mixin and colour.scss 
+
+// FLEX CENTER
+@mixin flex-center($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: center;
+  align-items: center;
+}
+
+// TEXT ELLIPSIS
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// BOX SHADOW
+@mixin box-shadow($shadow: $shadow-md) {
+  box-shadow: $shadow;
+}
+
+// TRANSITION
+@mixin transition($props: all, $time: 0.3s, $ease: ease) {
+  transition: $props $time $ease;
+}
+
+// MEDIA QUERY
+@mixin respond($breakpoint) {
+  @if $breakpoint == sm {
+    @media (max-width: 640px) { @content; }
+  }
+  @else if $breakpoint == md {
+    @media (max-width: 768px) { @content; }
+  }
+  @else if $breakpoint == lg {
+    @media (max-width: 1024px) { @content; }
+  }
+  @else if $breakpoint == xl {
+    @media (max-width: 1280px) { @content; }
+  }
+}
+
+
+$primary-action: #272F41;
+$beige: #FCEFDD;
+$selection-red: #FF6804;
+$shop-gradient:linear-gradient(to bottom, #FCEFDD 20%, #CCF0F2 100%);
+$white: #FFFFFF;
+$black: #000000;
+
+$font-heading1-size: 40px;
+$font-heading2-size: 32px;
+$font-heading3-size: 24px;
+$font-body-size: 16px;
+$font-body-medium-size: 14px;
+$font-body-small-size: 12px;
+
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 16px;
+
+// SHADOWS
+$shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+$shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+$shadow-lg: 0 10px 20px rgba(0,0,0,0.15);
+
+$font-family: 'Bebas Neue', sans-serif;
+
+$body-background: #FCEFDD;
+
+
+
+now i'll give you my tsx and scss files you look into tsx file and make the scss file nested if the colors used are available in colour.scss file use them as semantic colours else use the same colours 
+
+please let me know if you understood all the instructions dont hallucinate just ask if you have any doubt
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
